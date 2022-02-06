@@ -30,7 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade platformio
       - name: Run PlatformIO
-        run: pio run
+        run: pio run -e nodemcuv2
       - name: Install firebase-admin
         working-directory: ./.github/scripts
         run: pip install firebase-admin
