@@ -19,8 +19,6 @@ void OtaUpdate::initiateFirmwareUpdate(std::string firmwareLink)
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(*client, firmwareLink.c_str());
 
-  Serial.println(ESP.getFreeHeap());
-
   switch (ret)
   {
   case HTTP_UPDATE_FAILED:
