@@ -20,8 +20,8 @@ def update_firmware():
     hardware_id = f.read().split('"')[1]
 
   blob = storage.bucket().blob(f'firmware/{hardware_id + str(time.time())}.bin')
-  # new_url = blob.generate_signed_url(datetime.timedelta(days=365))
-  new_url = blob.public_url
+  new_url = blob.generate_signed_url(datetime.timedelta(days=365))
+  # new_url = blob.public_url
 
   with open('include/Firmware.h', 'w') as f:
     f.write(f'#define FIRMWARE_LINK "{new_url}"')
