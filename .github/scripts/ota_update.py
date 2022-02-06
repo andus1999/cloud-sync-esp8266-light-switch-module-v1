@@ -8,7 +8,9 @@ import os
 import json
 import time
 
-cred = credentials.Certificate(json.loads(os.environ.get('FB_ADMIN')))
+admin_key = json.loads(os.environ.get('FB_ADMIN'))
+print(admin_key)
+cred = credentials.Certificate(admin_key)
 
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://cm-model-default-rtdb.europe-west1.firebasedatabase.app'
