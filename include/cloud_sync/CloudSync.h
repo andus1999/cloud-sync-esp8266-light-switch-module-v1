@@ -40,7 +40,6 @@ public:
 
 private:
   CloudSync();
-  ~CloudSync();
   ESP8266WiFiMulti *wifiMulti;
   CloudClient *cloudClient;
   OtaUpdate otaUpdate;
