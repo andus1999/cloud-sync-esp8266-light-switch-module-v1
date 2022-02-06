@@ -1,4 +1,4 @@
-#include "node/Webserver.h"
+#include "node/WebServer.h"
 
 WebServer::WebServer(ESP8266WiFiMulti &w)
 {
@@ -78,17 +78,17 @@ void WebServer::handleInitialize()
   {
     std::string data = server.arg("plain").c_str();
 
-    //networkUid
+    // networkUid
     int delimiterPosition = data.find(',');
     networkUid = data.substr(0, delimiterPosition);
     data = data.substr(delimiterPosition + 1, data.length());
 
-    //refreshToken
+    // refreshToken
     delimiterPosition = data.find(",");
     refreshToken = data.substr(0, delimiterPosition);
     data = data.substr(delimiterPosition + 1, data.length());
 
-    //ssid and pass
+    // ssid and pass
     delimiterPosition = data.find(",");
     ssid = data.substr(0, delimiterPosition);
     pass = data.substr(delimiterPosition + 1, data.length());
