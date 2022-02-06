@@ -12,8 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install PIO cli
+        working-directory: ./.github/scripts
         run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+<<<<<<< HEAD
       - run: PATH=/home/runner/.platformio/penv/bin:$PATH
+=======
+>>>>>>> parent of c778601 (add pio path)
       - name: Build project
         run: pio run
       - name: Install firebase-admin
