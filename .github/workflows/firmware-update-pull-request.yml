@@ -18,7 +18,7 @@ jobs:
           pip install protobuf --upgrade
           sudo apt install python3-testresources
           pip install firebase-admin --upgrade
-      - name: Run python script
+      - name: Compile and upload binary
         run: python3 ./.github/scripts/ota_update.py
         env:
           FB_ADMIN: ${{ secrets.FB_ADMIN }}
