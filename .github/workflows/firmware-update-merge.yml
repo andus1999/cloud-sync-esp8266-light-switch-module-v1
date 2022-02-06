@@ -21,7 +21,6 @@ jobs:
         working-directory: ./.github/scripts
         run: |
           pip install protobuf --upgrade
-          apt install python3-testresources
           pip install firebase-admin --upgrade
       - name: Run python script
         working-directory: ./.github/scripts
