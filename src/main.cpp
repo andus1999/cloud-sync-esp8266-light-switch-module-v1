@@ -18,11 +18,11 @@ WebServer server(wifiMulti);
 SoftAp softAp(wifiMulti);
 CloudSync *cloudSync = &CloudSync::getInstance();
 
-Led led(0);
-Button button(2, []
-              { led.toggle(); });
-WiFiButton wifiButton({0x84, 0xf3, 0xeb, 0xc9, 0x27, 0x4a}, []
-                      { led.toggle(); });
+// Led led(0);
+// Button button(2, []
+//               { led.toggle(); });
+// WiFiButton wifiButton({0x84, 0xf3, 0xeb, 0xc9, 0x27, 0x4a}, []
+//                       { led.toggle(); });
 
 void setup()
 {
