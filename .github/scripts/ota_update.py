@@ -9,6 +9,9 @@ import json
 import time
 
 admin_key = json.loads(os.environ.get('FB_ADMIN'))
+print("raw:")
+print(os.environ.get('FB_ADMIN'))
+print("credentials:")
 print(admin_key)
 cred = credentials.Certificate(admin_key)
 
@@ -25,13 +28,6 @@ def update_firmware():
 
   with open('../../include/Firmware.h', 'w') as f:
     f.write(f'#define FIRMWARE_LINK "{new_url}"')
-  
-  # build = subprocess.run("cd C:\\Users\\Andi\\Documents\\Hardware\\PlatformIO\\iot_esp8266\\base " +
-  #   "&& C:\\Users\\Andi\\.platformio\\penv\\Scripts\\platformio.exe run --environment nodemcuv2",
-  #   shell=True, check=True)
-  
-  # if build.returncode != 0:
-  #   raise AssertionError('Build failed.')
 
   blob.upload_from_filename('../../.pio/build/nodemcuv2/firmware.bin')
   blob.make_public()
