@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <LittleFS.h>
+
 #define SSID_FILE "SSID.txt"
 #define PASS_FILE "PASS.txt"
 #define REFRESH_TOKEN_FILE "REFRESH_TOKEN.txt"
@@ -11,9 +14,6 @@
 #define INIT_FILE "init.txt"
 #define HTML_FILE "index.html"
 #define FONT_FILE "font.tff"
-
-#include <string>
-#include <LittleFs.h>
 
 class FileSystem
 {
