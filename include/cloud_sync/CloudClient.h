@@ -19,6 +19,7 @@ class CloudClient
 {
 public:
   CloudClient();
+  ~CloudClient();
   void begin(BearSSL::WiFiClientSecure *client,
              Parser::ParserCallback);
   bool initialize();
@@ -28,7 +29,6 @@ public:
   void stop(void);
 
 private:
-  ~CloudClient();
   ESP8266WiFiMulti *wifiMulti;
   BearSSL::WiFiClientSecure *client;
   Parser parser;
