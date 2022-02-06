@@ -11,13 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install PIO cli
+      - name:      - name: Install PIO cli
         working-directory: ./.github/scripts
-        run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
-<<<<<<< HEAD
-      - run: PATH=/home/runner/.platformio/penv/bin:$PATH
-=======
->>>>>>> parent of c778601 (add pio path)
+        run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platd pio path)
+      - name: Add pio to PATH
+        run: ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
       - name: Build project
         run: pio run
       - name: Install firebase-admin
