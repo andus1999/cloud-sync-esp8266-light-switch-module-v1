@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install PIO cli
-        run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platd pio path)
+        run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
       - name: Add pio to PATH
         run: ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
       - name: Build project
