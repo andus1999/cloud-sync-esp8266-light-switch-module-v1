@@ -40,11 +40,12 @@ public:
 
 private:
   CloudSync();
+  ~CloudSync();
   ESP8266WiFiMulti *wifiMulti;
-  CloudClient *cloudClient = new CloudClient;
+  CloudClient *cloudClient;
   OtaUpdate otaUpdate;
-  WiFiUDP ntpUDP;
-  NTPClient timeClient{ntpUDP, "pool.ntp.org"};
+  WiFiUDP *ntpUDP;
+  NTPClient *timeClient;
   std::map<std::string, CloudSync::EventCallback> eventMap;
   std::map<std::string, std::function<int()>> watchMap;
   std::map<std::string, std::function<int()>> watchLazyMap;

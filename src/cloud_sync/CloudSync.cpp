@@ -2,6 +2,9 @@
 
 CloudSync::CloudSync()
 {
+  cloudClient = new CloudClient;
+  ntpUDP = new WiFiUDP;
+  timeClient = new NTPClient(*ntpUDP, "pool.ntp.org");
 }
 
 CloudSync &CloudSync::getInstance()
@@ -23,12 +26,12 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
   cloudClient->begin(&c,
                      std::bind(&CloudSync::handleEvent, this, std::placeholders::_1, std::placeholders::_2));
   started = true;
-  timeClient.begin();
-  timeClient.setTimeOffset(0);
+  timeClient->begin();
+  timeClient->setTimeOffset(0);
   watchLazy("heartbeat", [this]
             {
-              this->timeClient.update();
-              return this->timeClient.getEpochTime(); });
+              this->timeClient->update();
+              return this->timeClient->getEpochTime(); });
 }
 
 void CloudSync::on(std::string identifier, EventCallback callback)
@@ -176,6 +179,8 @@ void CloudSync::handleFirmwareChange(std::string value)
   {
     cloudClient->stop();
     delete cloudClient;
+    delete timeClient;
+    delete ntpUDP;
     otaUpdate.initiateFirmwareUpdate(value);
   }
 }
