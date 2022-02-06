@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name:      - name: Install PIO cli
-        working-directory: ./.github/scripts
+      - name: Install PIO cli
         run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platd pio path)
       - name: Add pio to PATH
         run: ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
