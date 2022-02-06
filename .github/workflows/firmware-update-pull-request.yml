@@ -9,4 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: ip a
+      - name: Install PIO cli
+        run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+      - name: Add pio to PATH
+        run: ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio
+      - name: Install firebase-admin
+        run: |
+          pip install protobuf --upgrade
+          sudo apt install python3-testresources
+          pip install firebase-admin --upgrade
+      - name: Run python script
+        run: python3 ./.github/scripts/ota_update.py
+        env:
+          FB_ADMIN: ${{ secrets.FB_ADMIN }}

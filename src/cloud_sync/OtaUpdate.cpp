@@ -14,10 +14,12 @@ void OtaUpdate::initiateFirmwareUpdate(std::string firmwareLink)
   FileSystem::getInstance().setInit("false");
 
   client->setBufferSizes(16384, 512);
-  Serial.printf("Updating firmware...");
+  Serial.println("Updating firmware...");
   ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(*client, firmwareLink.c_str());
+
+  Serial.println(ESP.getFreeHeap());
 
   switch (ret)
   {

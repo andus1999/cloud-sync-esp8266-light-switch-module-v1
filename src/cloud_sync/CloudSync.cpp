@@ -28,8 +28,7 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
   watchLazy("heartbeat", [this]
             {
               this->timeClient.update();
-              return this->timeClient.getEpochTime();
-            });
+              return this->timeClient.getEpochTime(); });
 }
 
 void CloudSync::on(std::string identifier, EventCallback callback)
@@ -175,6 +174,7 @@ void CloudSync::handleFirmwareChange(std::string value)
 {
   if (value != FIRMWARE_LINK)
   {
+    cloudClient->stop();
     delete cloudClient;
     otaUpdate.initiateFirmwareUpdate(value);
   }
