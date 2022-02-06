@@ -18,11 +18,11 @@ WebServer server(wifiMulti);
 SoftAp softAp(wifiMulti);
 CloudSync *cloudSync = &CloudSync::getInstance();
 
-Led led(0);
-Button button(2, []
-              { led.toggle(); });
-WiFiButton wifiButton({0x84, 0xf3, 0xeb, 0xc9, 0x27, 0x4a}, []
-                      { led.toggle(); });
+// Led led(0);
+// Button button(2, []
+//               { led.toggle(); });
+// WiFiButton wifiButton({0x84, 0xf3, 0xeb, 0xc9, 0x27, 0x4a}, []
+//                       { led.toggle(); });
 
 void setup()
 {
@@ -33,7 +33,6 @@ void setup()
   WiFi.mode(WIFI_AP_STA);
   wifiMulti.addAP(STASSID, STAPASS);
   server.begin();
-  wifiButton.begin();
   cloudSync->begin(wifiMulti, client);
 }
 
@@ -48,14 +47,14 @@ void loop()
   else
   {
 
-    //Enable configuration AP 30 seconds after no connection
+    // Enable configuration AP 30 seconds after no connection
     if (millis() - cloudSync->disconnectedSince > 30000)
     {
       server.handleClient();
       softAp.enableConfigurationAp();
     }
 
-    //Test every minute if a connection can be reestablished
+    // Test every minute if a connection can be reestablished
     if (millis() - cloudSync->lastSync > 60000 && !server.pendingSetup)
     {
       Serial.println("Retrying");
