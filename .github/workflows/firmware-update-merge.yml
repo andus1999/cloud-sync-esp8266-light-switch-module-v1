@@ -14,6 +14,8 @@ jobs:
       - name: Install PIO cli
         working-directory: ./.github/scripts
         run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+      - name: Build project
+        run: pio run
       - name: Install firebase-admin
         working-directory: ./.github/scripts
         run: pip install firebase-admin
