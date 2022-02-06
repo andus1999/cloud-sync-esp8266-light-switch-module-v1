@@ -28,6 +28,7 @@ public:
   void stop(void);
 
 private:
+  ~CloudClient();
   ESP8266WiFiMulti *wifiMulti;
   BearSSL::WiFiClientSecure *client;
   Parser parser;
