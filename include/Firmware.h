@@ -1,0 +1,1 @@
+#define FIRMWARE_LINK "https://storage.googleapis.com/cm-model.appspot.com/firmware/master_0.bin"
