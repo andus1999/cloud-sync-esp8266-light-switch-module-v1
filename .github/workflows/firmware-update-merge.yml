@@ -11,6 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: cd .github/scripts && sudo deploy.sh
+      - name: Change folder
+        run: cd .github/scripts
+      - name: Install PIO cli
+        run: python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/master/scripts/get-platformio.py)"
+      - name: Install firebase-admin
+        run: pip install firebase-admin
+      - name: Run python script
+        run: python3 ota_update.py
         env:
           FB_ADMIN: ${{ secrets.FB_ADMIN }}
