@@ -8,7 +8,7 @@ import time
 
 admin_key = json.loads(os.environ.get('FB_ADMIN'))
 print("raw:")
-print("raw" + os.environ.get('FB_ADMIN'))
+print("raw_string" + os.environ.get('FB_ADMIN'))
 print("credentials:")
 print(admin_key)
 cred = credentials.Certificate(admin_key)
