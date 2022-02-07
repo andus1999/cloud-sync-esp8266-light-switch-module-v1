@@ -3,8 +3,7 @@
 #include <ESP8266WebServerSecure.h>
 #include <ESP8266WiFiMulti.h>
 #include <DNSServer.h>
-#include "utils/FileSystem.h"
-#include "cloud_sync/CloudSync.h"
+#include "../utils/FileSystem.h"
 
 class WebServer
 {
@@ -28,6 +27,8 @@ private:
 
 public:
   bool pendingSetup = false;
+  bool connected = false;
+  bool connectionChanged = false;
   WebServer(ESP8266WiFiMulti &wifiMulti);
   void begin();
   void handleClient();

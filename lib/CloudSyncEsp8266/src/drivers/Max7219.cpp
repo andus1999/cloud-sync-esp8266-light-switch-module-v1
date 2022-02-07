@@ -1,4 +1,4 @@
-#include "drivers/Max7219.h"
+#include "../drivers/Max7219.h"
 
 Max7219::Max7219(int pinDin, int pinCs, int pinClk)
 {
@@ -10,7 +10,8 @@ Max7219::Max7219(int pinDin, int pinCs, int pinClk)
   pinMode(clk, OUTPUT);
 }
 
-void Max7219::begin() {
+void Max7219::begin()
+{
   digitalWrite(cs, HIGH);
   write(REG_SCAN_LIMIT, 7);
   write(REG_DECODE, 0x00);
@@ -28,7 +29,8 @@ void Max7219::display(unsigned char *data)
   }
 }
 
-void Max7219::write(unsigned char opcode, unsigned char data) {
+void Max7219::write(unsigned char opcode, unsigned char data)
+{
   digitalWrite(cs, LOW);
   shiftOut(din, clk, MSBFIRST, opcode);
   shiftOut(din, clk, MSBFIRST, data);
@@ -46,7 +48,9 @@ void Max7219::clear()
 void Max7219::setBrightness(float brightness)
 {
   char b = brightness * 16;
-  if (b > 15) b = 15;
-  if (b < 0) b = 0;
+  if (b > 15)
+    b = 15;
+  if (b < 0)
+    b = 0;
   write(REG_INTENSITY, b);
 }

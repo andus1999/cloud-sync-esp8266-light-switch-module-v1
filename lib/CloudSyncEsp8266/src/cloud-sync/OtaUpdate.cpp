@@ -1,4 +1,4 @@
-#include "cloud_sync/OtaUpdate.h"
+#include "OtaUpdate.h"
 
 OtaUpdate::OtaUpdate()
 {

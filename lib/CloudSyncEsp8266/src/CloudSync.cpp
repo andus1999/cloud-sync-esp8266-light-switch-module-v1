@@ -1,4 +1,4 @@
-#include "cloud_sync/CloudSync.h"
+#include "CloudSync.h"
 
 CloudSync::CloudSync()
 {
@@ -16,7 +16,14 @@ CloudSync &CloudSync::getInstance()
 void CloudSync::begin(ESP8266WiFiMulti &m,
                       BearSSL::WiFiClientSecure &c)
 {
+  WiFi.mode(WIFI_AP_STA);
+
+  webServer = new WebServer(m);
+  softAp = new SoftAp(m);
+
   wifiMulti = &m;
+  wifiMulti->addAP(STASSID, STAPASS);
+
   on("firmware",
      std::bind(&CloudSync::handleFirmwareChange, this, std::placeholders::_1));
   on("observers",
@@ -25,13 +32,110 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
   otaUpdate.begin(&c);
   cloudClient->begin(&c,
                      std::bind(&CloudSync::handleEvent, this, std::placeholders::_1, std::placeholders::_2));
-  started = true;
+  initialized = true;
   timeClient->begin();
   timeClient->setTimeOffset(0);
   watchLazy("heartbeat", [this]
             {
               this->timeClient->update();
               return this->timeClient->getEpochTime(); });
+  webServer->begin();
+}
+
+void CloudSync::run()
+{
+  if (connected && !webServer->pendingSetup)
+  {
+    sync();
+    softAp->enableHiddenAp();
+  }
+
+  else
+  {
+
+    // Enable configuration AP 30 seconds after no connection
+    if (millis() - disconnectedSince > 30000)
+    {
+      webServer->handleClient();
+      softAp->enableConfigurationAp();
+    }
+
+    // Test every minute if a connection can be reestablished
+    if (millis() - lastSync > 60000 && webServer->pendingSetup)
+    {
+      Serial.println("Retrying");
+      webServer->connected = sync();
+    }
+
+    if (webServer->connectionChanged)
+    {
+      Serial.println("Connection changed.");
+      webServer->connected = sync();
+      if (webServer->pendingSetup)
+      {
+        stopSync();
+      }
+    }
+  }
+}
+
+bool CloudSync::sync()
+{
+  webServer->connectionChanged = false;
+
+  lastSync = millis();
+
+  if (!initialized)
+    return false;
+
+  if (wifiMulti->run(10000) == WL_CONNECTED)
+  {
+    bool updateSuccess = cloudClient->update();
+    bool uploadSuccess = true;
+    if (millis() - lastUpload > 300000 || (millis() - lastUpload > 15000 && observers))
+    {
+      uploadSuccess = upload();
+    }
+
+    for (auto const &it : watchMap)
+    {
+      if (syncedLocalState.find(it.first) == syncedLocalState.end())
+      {
+        uploadSuccess = upload();
+        break;
+      }
+      if (it.second() != syncedLocalState[it.first])
+      {
+        uploadSuccess = upload();
+        break;
+      }
+    }
+    if (updateSuccess && uploadSuccess)
+    {
+      if (!connected)
+      {
+        initialized = true;
+        Serial.println("Sync: Connection established");
+        connected = true;
+        connectedSince = millis();
+      }
+    }
+    else if (connected)
+    {
+      Serial.println("Sync: Connection lost");
+      connected = false;
+      disconnectedSince = millis();
+    }
+    return connected;
+  }
+  Serial.println("Sync: Failed to connect to WiFi.");
+  WiFi.disconnect();
+  return false;
+}
+
+void CloudSync::stopSync()
+{
+  cloudClient->stop();
 }
 
 void CloudSync::on(std::string identifier, EventCallback callback)
@@ -96,74 +200,27 @@ bool CloudSync::upload()
   return (syncOverrides() && uploadSuccess);
 }
 
-void CloudSync::stop()
+bool CloudSync::syncOverrides()
 {
-  cloudClient->stop();
-}
-
-bool CloudSync::initialize()
-{
-  connectionChanged = false;
-  if (!started)
-    return false;
-  if (wifiMulti->run() != WL_CONNECTED)
-    return false;
-  initialized = cloudClient->initialize();
-  cloudClient->stop();
-  return initialized;
-}
-
-bool CloudSync::sync()
-{
-  connectionChanged = false;
-
-  lastSync = millis();
-
-  if (!started)
-    return false;
-
-  if (wifiMulti->run(10000) == WL_CONNECTED)
+  if (overrides.size() == 0)
+    return true;
+  std::string j = "{";
+  for (auto o : overrides)
   {
-    bool updateSuccess = cloudClient->update();
-    bool uploadSuccess = true;
-    if (millis() - lastUpload > 300000 || (millis() - lastUpload > 15000 && observers))
-    {
-      uploadSuccess = upload();
-    }
-
-    for (auto const &it : watchMap)
-    {
-      if (syncedLocalState.find(it.first) == syncedLocalState.end())
-      {
-        uploadSuccess = upload();
-        break;
-      }
-      if (it.second() != syncedLocalState[it.first])
-      {
-        uploadSuccess = upload();
-        break;
-      }
-    }
-    if (updateSuccess && uploadSuccess)
-    {
-      if (!connected)
-      {
-        initialized = true;
-        Serial.println("Sync: Connection established");
-        connected = true;
-        connectedSince = millis();
-      }
-    }
-    else if (connected)
-    {
-      Serial.println("Sync: Connection lost");
-      connected = false;
-      disconnectedSince = millis();
-    }
-    return connected;
+    j.push_back('\"');
+    j.append(o.first);
+    j.append("\":");
+    j.append(std::to_string(o.second));
+    j.push_back(',');
   }
-  Serial.println("Sync: Failed to connect to WiFi.");
-  WiFi.disconnect();
+  j.pop_back();
+  j.push_back('}');
+  Serial.println(j.c_str());
+  if (cloudClient->override(j))
+  {
+    overrides.clear();
+    return true;
+  }
   return false;
 }
 
@@ -175,12 +232,14 @@ void CloudSync::handleEvent(std::string loc, std::string value)
 
 void CloudSync::handleFirmwareChange(std::string value)
 {
-  if (value != FIRMWARE_LINK)
+  if (value != FIRMWARE_LINK && strcmp(FIRMWARE_LINK, "none") != 0)
   {
     cloudClient->stop();
     delete cloudClient;
     delete timeClient;
     delete ntpUDP;
+    delete webServer;
+    delete softAp;
     otaUpdate.initiateFirmwareUpdate(value);
   }
 }
@@ -231,28 +290,4 @@ void CloudSync::addField(std::pair<std::string, std::function<int()>> it)
     json.append(field);
     valuesInJson[it.first] = value;
   }
-}
-
-bool CloudSync::syncOverrides()
-{
-  if (overrides.size() == 0)
-    return true;
-  std::string j = "{";
-  for (auto o : overrides)
-  {
-    j.push_back('\"');
-    j.append(o.first);
-    j.append("\":");
-    j.append(std::to_string(o.second));
-    j.push_back(',');
-  }
-  j.pop_back();
-  j.push_back('}');
-  Serial.println(j.c_str());
-  if (cloudClient->override(j))
-  {
-    overrides.clear();
-    return true;
-  }
-  return false;
 }

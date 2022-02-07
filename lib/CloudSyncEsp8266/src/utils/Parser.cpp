@@ -1,4 +1,4 @@
-#include "cloud_sync/Parser.h"
+#include "Parser.h"
 
 Parser::Parser(ParserCallback cb, bool eventParser)
 {
@@ -25,7 +25,7 @@ void Parser::parse(const char *data, int len)
   for (int i = 0; i < len; i++)
   {
     char c = data[i];
-    //Serial.write(c);
+    // Serial.write(c);
     if (c == ' ' || c == '\t')
       continue;
     if (c == '"')

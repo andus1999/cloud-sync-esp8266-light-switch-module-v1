@@ -1,4 +1,4 @@
-#include "cloud_sync/CloudClient.h"
+#include "CloudClient.h"
 
 CloudClient::CloudClient()
 {

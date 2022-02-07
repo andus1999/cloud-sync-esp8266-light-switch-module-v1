@@ -3,11 +3,11 @@
 #include <Arduino.h>
 #include <FunctionalInterrupt.h>
 #include <functional>
-#include "cloud_sync/CloudSync.h"
+#include "../CloudSync.h"
 
 class Button
 {
-  //Standard push button
+  // Standard push button
 public:
   Button(int pinNumber);
   Button(int pinNumber, std::function<void(void)>);

@@ -1,4 +1,4 @@
-#include "peripherals/LedMatrix.h"
+#include "LedMatrix.h"
 
 LedMatrix::LedMatrix(int pinDin, int pinCs, int pinClk)
 {

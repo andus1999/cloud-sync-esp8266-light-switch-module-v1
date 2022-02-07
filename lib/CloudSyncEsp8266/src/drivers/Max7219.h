@@ -11,7 +11,8 @@
 #define INTENSITY_MIN 0x00
 #define INTENSITY_MAX 0x0F
 
-class Max7219 {
+class Max7219
+{
 public:
   Max7219(int din, int cs, int clk);
   Max7219() = default;
@@ -20,7 +21,7 @@ public:
   void begin();
   void clear();
 
-private :
+private:
   int din;
   int cs;
   int clk;

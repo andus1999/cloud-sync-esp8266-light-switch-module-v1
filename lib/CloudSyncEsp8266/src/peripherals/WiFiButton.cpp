@@ -1,4 +1,4 @@
-#include "peripherals/WiFiButton.h"
+#include "WiFiButton.h"
 
 std::map<std::string, int> WiFiButton::timesActivatedMap;
 std::map<std::string, int> WiFiButton::performActionMap;

@@ -3,9 +3,12 @@
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266HTTPClient.h>
 
-#include "cloud_sync/Parser.h"
-#include "HardwareInfo.h"
-#include "utils/FileSystem.h"
+#include "../utils/Parser.h"
+#include "../utils/FileSystem.h"
+
+#ifndef HARDWARE_ID
+#define HARDWARE_ID "none"
+#endif
 
 #define REFRESH_URL "https://securetoken.googleapis.com/v1/token?key=AIzaSyC05AlpCk7PBx8XjUElx5QXhPFsT9adWy4"
 #define DATABASE "https://cloud-sync-iot-default-rtdb.europe-west1.firebasedatabase.app"

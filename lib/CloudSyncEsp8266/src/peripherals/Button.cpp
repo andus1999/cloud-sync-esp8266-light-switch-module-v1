@@ -1,4 +1,4 @@
-#include "peripherals/Button.h"
+#include "Button.h"
 
 Button::Button(int pinNumber, std::function<void(void)> a = nullptr) : pin{pinNumber}
 {

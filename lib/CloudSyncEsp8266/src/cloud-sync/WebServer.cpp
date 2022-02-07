@@ -1,4 +1,4 @@
-#include "node/WebServer.h"
+#include "WebServer.h"
 
 WebServer::WebServer(ESP8266WiFiMulti &w)
 {
@@ -113,12 +113,12 @@ void WebServer::handleInitialize()
 void WebServer::handleSuccess()
 {
   handleResponse();
-  bool c = CloudSync::getInstance().connected;
+  bool c = connected;
   server.send(200, "text/plain", c ? "true" : "false");
   if (c)
   {
     pendingSetup = false;
-    CloudSync::getInstance().connectionChanged = true;
+    connectionChanged = true;
   }
 }
 
@@ -194,6 +194,6 @@ void WebServer::connectToAp()
   {
     Serial.println("Starting sync...");
     server.close();
-    CloudSync::getInstance().connectionChanged = true;
+    connectionChanged = true;
   }
 }
