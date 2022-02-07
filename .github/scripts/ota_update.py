@@ -23,7 +23,7 @@ def update_firmware():
   new_url = blob.generate_signed_url(datetime.timedelta(days=365))
   # new_url = blob.public_url
 
-  with open('include/Firmware.h', 'w') as f:
+  with open('include/Firmware.h', 'w+') as f:
     f.write(f'#define FIRMWARE_LINK "{new_url}"')
   
   subprocess.run(["pio", "run"])
