@@ -42,7 +42,7 @@ void WebServer::begin()
 void WebServer::handleClient()
 {
   if (!initialized)
-    return;
+    begin();
   if (server.getServer().status() == CLOSED)
   {
     Serial.println("restarting the server");

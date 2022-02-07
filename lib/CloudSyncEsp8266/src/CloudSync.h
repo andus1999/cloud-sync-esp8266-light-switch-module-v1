@@ -54,6 +54,7 @@ private:
   void addField(std::pair<std::string, std::function<int()>> it);
   void handleFirmwareChange(std::string value);
   void handleObserverChange(std::string value);
+  void handleCommand(std::string command);
   bool syncOverrides();
   void stopSync();
   bool upload();

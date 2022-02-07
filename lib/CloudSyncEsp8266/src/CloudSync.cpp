@@ -35,6 +35,8 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
      std::bind(&CloudSync::handleFirmwareChange, this, std::placeholders::_1));
   on("observers",
      std::bind(&CloudSync::handleObserverChange, this, std::placeholders::_1));
+  on("command", std::bind(&CloudSync::handleCommand, this, std::placeholders::_1));
+
   c.setBufferSizes(4096, 512);
   otaUpdate.begin(&c);
   cloudClient->begin(&c,
@@ -262,6 +264,18 @@ void CloudSync::handleObserverChange(std::string value)
   observers = std::stoi(value);
   if (observers > 0)
     upload();
+}
+
+void CloudSync::handleCommand(std::string command)
+{
+  if (command == "disconnect")
+  {
+    FileSystem::getInstance().setNetworkUid("");
+    FileSystem::getInstance().setRefreshToken("");
+    FileSystem::getInstance().setInit("false");
+    connected = false;
+    override("command", 0);
+  }
 }
 
 void CloudSync::generateJson()
