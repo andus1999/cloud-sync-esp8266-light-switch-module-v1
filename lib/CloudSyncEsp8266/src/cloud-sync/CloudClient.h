@@ -36,9 +36,9 @@ private:
   BearSSL::WiFiClientSecure *client;
   Parser parser;
   uint8_t buff[128] = {0};
-  HTTPClient *https;
-  HTTPClient *uploadHttps;
-  BearSSL::WiFiClientSecure *uploadClient;
+  HTTPClient https;
+  HTTPClient uploadHttps;
+  BearSSL::WiFiClientSecure uploadClient;
   unsigned long lastEvent = 0;
   bool initialized = false;
   bool listeningForEvents = false;

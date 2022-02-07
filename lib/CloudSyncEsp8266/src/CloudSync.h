@@ -11,10 +11,6 @@
 #include "cloud-sync/WebServer.h"
 #include "cloud-sync/SoftAp.h"
 
-#ifndef FIRMWARE_LINK
-#define FIRMWARE_LINK "none"
-#endif
-
 class CloudSync
 {
 public:
@@ -31,7 +27,8 @@ public:
   void override(std::string identifier, int value);
   bool sync(void);
   void begin(ESP8266WiFiMulti &m,
-             BearSSL::WiFiClientSecure &c);
+             BearSSL::WiFiClientSecure &c,
+             std::string firmwareLink);
 
   bool initialized = false;
   bool connected = false;
@@ -49,8 +46,8 @@ private:
   WiFiUDP *ntpUDP;
   NTPClient *timeClient;
 
-  WebServer *webServer;
-  SoftAp *softAp;
+  WebServer *webServer = nullptr;
+  SoftAp *softAp = nullptr;
 
   void generateJson();
   void addField(std::pair<std::string, std::function<int()>> it);
@@ -67,6 +64,7 @@ private:
   std::list<std::pair<std::string, int>> overrides;
   std::map<std::string, int> valuesInJson;
   std::string json;
+  std::string firmwareLink;
 
   int observers = 0;
   unsigned long lastUpload = -300000;

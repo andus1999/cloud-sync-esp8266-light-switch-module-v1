@@ -14,10 +14,16 @@ CloudSync &CloudSync::getInstance()
 }
 
 void CloudSync::begin(ESP8266WiFiMulti &m,
-                      BearSSL::WiFiClientSecure &c)
+                      BearSSL::WiFiClientSecure &c,
+                      std::string firmware = "none")
 {
+  firmwareLink = firmware;
   WiFi.mode(WIFI_AP_STA);
 
+  if (webServer != nullptr)
+    delete webServer;
+  if (softAp != nullptr)
+    delete softAp;
   webServer = new WebServer(m);
   softAp = new SoftAp(m);
 
@@ -44,14 +50,18 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
 
 void CloudSync::run()
 {
-  if (connected && !webServer->pendingSetup)
+  if (connected && (webServer == nullptr || !webServer->pendingSetup))
   {
+    delete webServer;
+    webServer = nullptr;
     sync();
     softAp->enableHiddenAp();
   }
 
   else
   {
+    if (webServer == nullptr)
+      webServer = new WebServer(*wifiMulti);
 
     // Enable configuration AP 30 seconds after no connection
     if (millis() - disconnectedSince > 30000)
@@ -61,7 +71,7 @@ void CloudSync::run()
     }
 
     // Test every minute if a connection can be reestablished
-    if (millis() - lastSync > 60000 && webServer->pendingSetup)
+    if (millis() - lastSync > 60000 && !webServer->pendingSetup)
     {
       Serial.println("Retrying");
       webServer->connected = sync();
@@ -81,7 +91,8 @@ void CloudSync::run()
 
 bool CloudSync::sync()
 {
-  webServer->connectionChanged = false;
+  if (webServer != nullptr)
+    webServer->connectionChanged = false;
 
   lastSync = millis();
 
@@ -232,14 +243,14 @@ void CloudSync::handleEvent(std::string loc, std::string value)
 
 void CloudSync::handleFirmwareChange(std::string value)
 {
-  if (value != FIRMWARE_LINK && strcmp(FIRMWARE_LINK, "none") != 0)
+  if (value != firmwareLink && firmwareLink != "none")
   {
     cloudClient->stop();
     delete cloudClient;
     delete timeClient;
     delete ntpUDP;
-    delete webServer;
     delete softAp;
+    Serial.println(ESP.getFreeHeap());
     otaUpdate.initiateFirmwareUpdate(value);
   }
 }

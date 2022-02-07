@@ -2,16 +2,10 @@
 
 CloudClient::CloudClient()
 {
-  https = new HTTPClient();
-  uploadClient = new BearSSL::WiFiClientSecure();
-  uploadHttps = new HTTPClient();
 }
 
 CloudClient::~CloudClient()
 {
-  delete https;
-  delete uploadClient;
-  delete uploadHttps;
 }
 
 void CloudClient::begin(BearSSL::WiFiClientSecure *c,
@@ -21,13 +15,13 @@ void CloudClient::begin(BearSSL::WiFiClientSecure *c,
   parser = Parser(cb, true);
 
   client->setInsecure();
-  uploadClient->setInsecure();
+  uploadClient.setInsecure();
   client->setNoDelay(true);
-  uploadClient->setNoDelay(true);
-  uploadClient->setBufferSizes(UPLOAD_BUFFER, UPLOAD_BUFFER);
-  https->setReuse(true);
-  uploadHttps->setReuse(true);
-  https->setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+  uploadClient.setNoDelay(true);
+  uploadClient.setBufferSizes(UPLOAD_BUFFER, UPLOAD_BUFFER);
+  https.setReuse(true);
+  uploadHttps.setReuse(true);
+  https.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
 }
 bool CloudClient::update()
 {
@@ -60,9 +54,9 @@ bool CloudClient::override(std::string json)
 void CloudClient::stop()
 {
   listeningForEvents = false;
-  uploadHttps->end();
-  https->end();
-  uploadClient->stop();
+  uploadHttps.end();
+  https.end();
+  uploadClient.stop();
   client->stop();
 }
 
@@ -86,17 +80,17 @@ bool CloudClient::patch(std::string uri, std::string body)
 {
 
   if (checkUploadConnection(authenticateUrl(DATABASE + uri)))
-    uploadHttps->setURL(authenticateUrl(uri).c_str());
+    uploadHttps.setURL(authenticateUrl(uri).c_str());
 
-  int httpCode = uploadHttps->PATCH(body.c_str());
+  int httpCode = uploadHttps.PATCH(body.c_str());
 
   if (httpCode == -2)
   {
     Serial.println("Http code -2. Reconnecting.");
-    uploadHttps->end();
-    uploadClient->stop();
-    uploadHttps->begin(*uploadClient, authenticateUrl(DATABASE + uri).c_str());
-    httpCode = uploadHttps->PATCH(body.c_str());
+    uploadHttps.end();
+    uploadClient.stop();
+    uploadHttps.begin(uploadClient, authenticateUrl(DATABASE + uri).c_str());
+    httpCode = uploadHttps.PATCH(body.c_str());
   }
 
   Serial.printf("[HTTPS] PATCH... code: %d\n", httpCode);
@@ -115,11 +109,11 @@ bool CloudClient::patch(std::string uri, std::string body)
 
 bool CloudClient::checkUploadConnection(std::string url)
 {
-  if (!uploadHttps->connected())
+  if (!uploadHttps.connected())
   {
     Serial.println("Upload connection lost, trying to reconnect.");
-    uploadHttps->end();
-    uploadHttps->begin(*uploadClient, url.c_str());
+    uploadHttps.end();
+    uploadHttps.begin(uploadClient, url.c_str());
     return false;
   }
   return true;
@@ -127,11 +121,11 @@ bool CloudClient::checkUploadConnection(std::string url)
 
 bool CloudClient::checkMainConnection(std::string url)
 {
-  if (!https->connected())
+  if (!https.connected())
   {
     Serial.println("Main connection lost, trying to reconnect.");
-    https->end();
-    https->begin(*client, url.c_str());
+    https.end();
+    https.begin(*client, url.c_str());
     return false;
   }
   return true;
@@ -147,13 +141,13 @@ bool CloudClient::listenForEvents()
     if (checkMainConnection(authenticateUrl(DATABASE + CLOUD_URI)))
     {
       if (listeningForEvents)
-        https->setURL(authenticateUrl(CLOUD_URI).c_str());
+        https.setURL(authenticateUrl(CLOUD_URI).c_str());
       else
-        https->setURL(authenticateUrl(DATABASE + CLOUD_URI).c_str());
+        https.setURL(authenticateUrl(DATABASE + CLOUD_URI).c_str());
     }
 
-    https->addHeader("Accept", "text/event-stream");
-    httpCode = https->GET();
+    https.addHeader("Accept", "text/event-stream");
+    httpCode = https.GET();
 
     Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
 
@@ -171,7 +165,7 @@ bool CloudClient::listenForEvents()
 
   if (listeningForEvents)
   {
-    if (https->connected())
+    if (https.connected())
     {
       size_t size = client->available();
       if (size)
@@ -192,11 +186,11 @@ bool CloudClient::refreshIdToken()
   listeningForEvents = false;
 
   if (checkMainConnection(REFRESH_URL))
-    https->setURL(REFRESH_URL);
+    https.setURL(REFRESH_URL);
 
   std::string body = "{\"grant_type\":\"refresh_token\",\"refresh_token\":\"" + FileSystem::getInstance().getRefreshToken() + "\"}";
 
-  int httpCode = https->POST(body.c_str());
+  int httpCode = https.POST(body.c_str());
   Serial.println(httpCode);
 
   if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY)
@@ -206,7 +200,7 @@ bool CloudClient::refreshIdToken()
                if (loc == "id_token")
                  this->idToken = value; });
 
-    while (https->connected())
+    while (https.connected())
     {
       String chunkHeader = client->readStringUntil('\n');
       chunkHeader.trim();
