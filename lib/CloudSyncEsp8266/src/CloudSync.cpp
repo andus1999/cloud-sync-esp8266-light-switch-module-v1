@@ -270,11 +270,12 @@ void CloudSync::handleCommand(std::string command)
 {
   if (command == "disconnect")
   {
+    override("command", 0);
+    syncOverrides();
     FileSystem::getInstance().setNetworkUid("");
     FileSystem::getInstance().setRefreshToken("");
     FileSystem::getInstance().setInit("false");
     connected = false;
-    override("command", 0);
   }
 }
 
