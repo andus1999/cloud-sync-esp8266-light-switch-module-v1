@@ -3,6 +3,7 @@
 #include <ESP8266WiFiMulti.h>
 
 #include "HardwareId.h"
+#include "Firmware.h"
 
 #include <CloudSync.h>
 #include <peripherals/Led.h>
