@@ -9,8 +9,10 @@ CloudClient::~CloudClient()
 }
 
 void CloudClient::begin(BearSSL::WiFiClientSecure *c,
-                        Parser::ParserCallback cb)
+                        Parser::ParserCallback cb,
+                        std::string id)
 {
+  hardwareId = id;
   client = c;
   parser = Parser(cb, true);
 
@@ -65,7 +67,7 @@ bool CloudClient::initialize()
   if (!refreshIdToken())
     return false;
 
-  if (!patch(INFO_URI, "{\"hardware_id\":\"" HARDWARE_ID "\",\"active\":true}"))
+  if (!patch(INFO_URI, "{\"hardware_id\":\"" + hardwareId + "\",\"active\":true}"))
   {
     Serial.println("[HTTPS] PATCH failed couldn't write info.");
     return false;

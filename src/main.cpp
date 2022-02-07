@@ -25,7 +25,7 @@ void setup()
   Serial.begin(115200);
   Serial.printf("Heap on start: %d\n", ESP.getFreeHeap());
 
-  cloudSync->begin(wifiMulti, client, FIRMWARE_LINK);
+  cloudSync->begin(wifiMulti, client, HARDWARE_ID, FIRMWARE_LINK);
 }
 
 void loop()

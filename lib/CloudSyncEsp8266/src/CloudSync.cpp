@@ -15,6 +15,7 @@ CloudSync &CloudSync::getInstance()
 
 void CloudSync::begin(ESP8266WiFiMulti &m,
                       BearSSL::WiFiClientSecure &c,
+                      std::string hardwareId = "none",
                       std::string firmware = "none")
 {
   firmwareLink = firmware;
@@ -37,7 +38,8 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
   c.setBufferSizes(4096, 512);
   otaUpdate.begin(&c);
   cloudClient->begin(&c,
-                     std::bind(&CloudSync::handleEvent, this, std::placeholders::_1, std::placeholders::_2));
+                     std::bind(&CloudSync::handleEvent, this, std::placeholders::_1, std::placeholders::_2),
+                     hardwareId);
   initialized = true;
   timeClient->begin();
   timeClient->setTimeOffset(0);

@@ -28,6 +28,7 @@ public:
   bool sync(void);
   void begin(ESP8266WiFiMulti &m,
              BearSSL::WiFiClientSecure &c,
+             std::string hardwareId,
              std::string firmwareLink);
 
   bool initialized = false;

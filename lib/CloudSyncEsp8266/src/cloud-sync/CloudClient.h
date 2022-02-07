@@ -24,7 +24,8 @@ public:
   CloudClient();
   ~CloudClient();
   void begin(BearSSL::WiFiClientSecure *client,
-             Parser::ParserCallback);
+             Parser::ParserCallback,
+             std::string hardwareId);
   bool initialize();
   bool update(void);
   bool uploadLocalState(std::string);
@@ -42,6 +43,7 @@ private:
   unsigned long lastEvent = 0;
   bool initialized = false;
   bool listeningForEvents = false;
+  std::string hardwareId;
 
   bool patch(std::string uri, std::string body);
   bool checkUploadConnection(std::string url);
