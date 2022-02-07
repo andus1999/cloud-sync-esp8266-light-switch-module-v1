@@ -16,7 +16,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 def update_firmware():
-  with open('include/HardwareInfo.h', 'r+') as f:
+  with open('include/HardwareId.h', 'r+') as f:
     hardware_id = f.read().split('"')[1]
 
   blob = storage.bucket().blob(f'firmware/{hardware_id + str(time.time())}.bin')
