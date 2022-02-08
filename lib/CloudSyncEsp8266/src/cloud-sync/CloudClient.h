@@ -13,9 +13,10 @@
 #define REFRESH_URL "https://securetoken.googleapis.com/v1/token?key=AIzaSyC05AlpCk7PBx8XjUElx5QXhPFsT9adWy4"
 #define DATABASE "https://cloud-sync-iot-default-rtdb.europe-west1.firebasedatabase.app"
 #define NETWORK_PATH "/networks/" + FileSystem::getInstance().getNetworkUid() + "/devices/" + std::string(WiFi.macAddress().c_str())
-#define INFO_URI std::string(NETWORK_PATH + "/device_info.json")
+#define INFO_URI std::string(NETWORK_PATH + "/info.json")
 #define LOCAL_URI std::string(NETWORK_PATH + "/local_state.json")
 #define CLOUD_URI std::string(NETWORK_PATH + "/cloud_state.json")
+#define INITIALIZATION_DATA "{\"hardware_id\":\"" + hardwareId + "\"}"
 #define UPLOAD_BUFFER 512
 
 class CloudClient

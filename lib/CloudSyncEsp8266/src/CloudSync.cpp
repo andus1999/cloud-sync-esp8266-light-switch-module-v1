@@ -3,8 +3,6 @@
 CloudSync::CloudSync()
 {
   cloudClient = new CloudClient;
-  ntpUDP = new WiFiUDP;
-  timeClient = new NTPClient(*ntpUDP, "pool.ntp.org");
 }
 
 CloudSync &CloudSync::getInstance()
@@ -33,8 +31,8 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
 
   on("firmware",
      std::bind(&CloudSync::handleFirmwareChange, this, std::placeholders::_1));
-  on("observers",
-     std::bind(&CloudSync::handleObserverChange, this, std::placeholders::_1));
+  on("update",
+     std::bind(&CloudSync::handleUpdate, this, std::placeholders::_1));
   on("command", std::bind(&CloudSync::handleCommand, this, std::placeholders::_1));
 
   c.setBufferSizes(4096, 512);
@@ -43,12 +41,8 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
                      std::bind(&CloudSync::handleEvent, this, std::placeholders::_1, std::placeholders::_2),
                      hardwareId);
   initialized = true;
-  timeClient->begin();
-  timeClient->setTimeOffset(0);
   watchLazy("heartbeat", [this]
-            {
-              this->timeClient->update();
-              return this->timeClient->getEpochTime(); });
+            { return this->timeStamp; });
   webServer->begin();
 }
 
@@ -75,17 +69,19 @@ void CloudSync::run()
     }
 
     // Test every minute if a connection can be reestablished
-    if (millis() - lastSync > 60000 && !webServer->pendingSetup)
+    if (millis() - lastSync > 300000 && !webServer->pendingSetup)
     {
       Serial.println("Retrying");
       webServer->connected = sync();
+      stopSync();
     }
 
     if (webServer->connectionChanged)
     {
+      // OOM issue
       Serial.println("Connection changed.");
       webServer->connected = sync();
-      if (webServer->pendingSetup)
+      if (webServer->pendingSetup || webServer->connected == false)
       {
         stopSync();
       }
@@ -107,8 +103,9 @@ bool CloudSync::sync()
   {
     bool updateSuccess = cloudClient->update();
     bool uploadSuccess = true;
-    if (millis() - lastUpload > 300000 || (millis() - lastUpload > 15000 && observers))
+    if (millis() - lastUpload > 300000 || (millis() - lastUpload > 15000 && updateRequested))
     {
+      updateRequested = false;
       uploadSuccess = upload();
     }
 
@@ -140,6 +137,7 @@ bool CloudSync::sync()
       Serial.println("Sync: Connection lost");
       connected = false;
       disconnectedSince = millis();
+      stopSync();
     }
     return connected;
   }
@@ -251,19 +249,16 @@ void CloudSync::handleFirmwareChange(std::string value)
   {
     cloudClient->stop();
     delete cloudClient;
-    delete timeClient;
-    delete ntpUDP;
     delete softAp;
     Serial.println(ESP.getFreeHeap());
     otaUpdate.initiateFirmwareUpdate(value);
   }
 }
 
-void CloudSync::handleObserverChange(std::string value)
+void CloudSync::handleUpdate(std::string value)
 {
-  observers = std::stoi(value);
-  if (observers > 0)
-    upload();
+  updateRequested = true;
+  timeStamp = std::stoi(value);
 }
 
 void CloudSync::handleCommand(std::string command)

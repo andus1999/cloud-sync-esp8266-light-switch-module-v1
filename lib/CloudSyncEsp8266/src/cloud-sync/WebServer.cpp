@@ -76,6 +76,7 @@ void WebServer::handleInitialize()
 {
   if (server.method() == HTTP_PUT)
   {
+    fileSystem->setInit("false");
     std::string data = server.arg("plain").c_str();
 
     // networkUid
@@ -115,9 +116,9 @@ void WebServer::handleSuccess()
   handleResponse();
   bool c = connected;
   server.send(200, "text/plain", c ? "true" : "false");
+  pendingSetup = false;
   if (c)
   {
-    pendingSetup = false;
     connectionChanged = true;
   }
 }
@@ -194,6 +195,7 @@ void WebServer::connectToAp()
   {
     Serial.println("Starting sync...");
     server.close();
+    // cuases OOM
     connectionChanged = true;
   }
 }

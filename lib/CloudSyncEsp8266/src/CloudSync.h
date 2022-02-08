@@ -3,11 +3,11 @@
 #include <list>
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266WiFi.h>
-#include <WiFiUdp.h>
+// #include <WiFiUdp.h>
 
 #include "cloud-sync/CloudClient.h"
 #include "cloud-sync/OtaUpdate.h"
-#include "cloud-sync/NTPClient.h"
+// #include "cloud-sync/NTPClient.h"
 #include "cloud-sync/WebServer.h"
 #include "cloud-sync/SoftAp.h"
 
@@ -39,13 +39,24 @@ public:
 
 private:
   CloudSync();
+  enum SyncState
+  {
+    STARTING,
+    CONNECTED,
+    DISCONNECTED,
+    PENDING_SETUP,
+    SETUP_SUCCESS,
+    SETUP_FAILURE,
+  };
+  SyncState parserState;
+
   ESP8266WiFiMulti *wifiMulti;
 
   OtaUpdate otaUpdate;
   CloudClient *cloudClient;
 
-  WiFiUDP *ntpUDP;
-  NTPClient *timeClient;
+  // WiFiUDP *ntpUDP;
+  // NTPClient *timeClient;
 
   WebServer *webServer = nullptr;
   SoftAp *softAp = nullptr;
@@ -53,7 +64,7 @@ private:
   void generateJson();
   void addField(std::pair<std::string, std::function<int()>> it);
   void handleFirmwareChange(std::string value);
-  void handleObserverChange(std::string value);
+  void handleUpdate(std::string value);
   void handleCommand(std::string command);
   bool syncOverrides();
   void stopSync();
@@ -68,7 +79,8 @@ private:
   std::string json;
   std::string firmwareLink;
 
-  int observers = 0;
+  int timeStamp;
+  bool updateRequested = false;
   unsigned long lastUpload = -300000;
   unsigned long lastSync = -60000;
   unsigned long connectedSince = -60000;

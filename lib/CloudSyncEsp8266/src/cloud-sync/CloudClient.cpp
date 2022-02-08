@@ -67,7 +67,7 @@ bool CloudClient::initialize()
   if (!refreshIdToken())
     return false;
 
-  if (!patch(INFO_URI, "{\"hardware_id\":\"" + hardwareId + "\",\"active\":true}"))
+  if (!patch(INFO_URI, INITIALIZATION_DATA))
   {
     Serial.println("[HTTPS] PATCH failed couldn't write info.");
     return false;
