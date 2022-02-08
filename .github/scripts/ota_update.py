@@ -35,7 +35,7 @@ def update_firmware():
   print(networks.keys())
   for network in networks.keys():
     for device in networks[network]['devices'].keys():
-      if networks[network]['devices'][device]['device_info']['hardware_id'] == hardware_id:
+      if networks[network]['devices'][device]['info']['hardware_id'] == hardware_id:
         db.reference(f'networks/{network}/devices/{device}/cloud_state/firmware').set(new_url)
 
 if __name__ == "__main__":
