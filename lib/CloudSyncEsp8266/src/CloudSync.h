@@ -79,7 +79,7 @@ private:
   std::string json;
   std::string firmwareLink;
 
-  int timeStamp;
+  unsigned int timeStamp;
   bool updateRequested = false;
   unsigned long lastUpload = -300000;
   unsigned long lastSync = -60000;

@@ -181,6 +181,30 @@ void CloudSync::override(std::string identifier, int value)
   overrides.push_back(std::pair(identifier, value));
 }
 
+void CloudSync::handleEvent(std::string loc, std::string value)
+{
+  if (eventMap.find(loc) != eventMap.end())
+    eventMap[loc](value);
+}
+
+void CloudSync::handleFirmwareChange(std::string value)
+{
+  if (value != firmwareLink && firmwareLink != "none")
+  {
+    cloudClient->stop();
+    delete cloudClient;
+    delete softAp;
+    Serial.println(ESP.getFreeHeap());
+    otaUpdate.initiateFirmwareUpdate(value);
+  }
+}
+
+void CloudSync::handleUpdate(std::string value)
+{
+  updateRequested = true;
+  timeStamp = std::stoi(value);
+}
+
 bool CloudSync::upload()
 {
   bool uploadSuccess;
@@ -234,30 +258,6 @@ bool CloudSync::syncOverrides()
     return true;
   }
   return false;
-}
-
-void CloudSync::handleEvent(std::string loc, std::string value)
-{
-  if (eventMap.find(loc) != eventMap.end())
-    eventMap[loc](value);
-}
-
-void CloudSync::handleFirmwareChange(std::string value)
-{
-  if (value != firmwareLink && firmwareLink != "none")
-  {
-    cloudClient->stop();
-    delete cloudClient;
-    delete softAp;
-    Serial.println(ESP.getFreeHeap());
-    otaUpdate.initiateFirmwareUpdate(value);
-  }
-}
-
-void CloudSync::handleUpdate(std::string value)
-{
-  updateRequested = true;
-  timeStamp = std::stoi(value);
 }
 
 void CloudSync::handleCommand(std::string command)
