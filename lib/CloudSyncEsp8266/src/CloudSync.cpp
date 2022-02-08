@@ -19,11 +19,8 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
   firmwareLink = firmware;
   WiFi.mode(WIFI_AP_STA);
 
-  if (webServer != nullptr)
-    delete webServer;
   if (softAp != nullptr)
     delete softAp;
-  webServer = new WebServer(m);
   softAp = new SoftAp(m);
 
   wifiMulti = &m;
@@ -43,15 +40,17 @@ void CloudSync::begin(ESP8266WiFiMulti &m,
   initialized = true;
   watchLazy("heartbeat", [this]
             { return this->timeStamp; });
-  webServer->begin();
 }
 
 void CloudSync::run()
 {
   if (connected && (webServer == nullptr || !webServer->pendingSetup))
   {
-    delete webServer;
-    webServer = nullptr;
+    if (webServer != nullptr)
+    {
+      delete webServer;
+      webServer = nullptr;
+    }
     sync();
     softAp->enableHiddenAp();
   }
