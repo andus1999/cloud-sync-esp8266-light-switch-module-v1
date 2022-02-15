@@ -2,6 +2,8 @@
 
 Button::Button(int pinNumber, std::function<void(void)> a = nullptr) : pin{pinNumber}
 {
+  pinMode(pin, INPUT);
+
   action = a;
   attachInterrupt(
       digitalPinToInterrupt(pin), [this]()
@@ -26,8 +28,8 @@ void Button::increaseActivationCount()
 {
   if (millis() - lastActivation > 100)
   {
-    performAction += 1;
     lastActivation = millis();
+    performAction += 1;
     timesActivated += 1;
   }
 }

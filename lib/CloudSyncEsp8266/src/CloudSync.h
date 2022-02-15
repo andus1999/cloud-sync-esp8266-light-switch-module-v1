@@ -84,5 +84,5 @@ private:
   unsigned long lastUpload = -300000;
   unsigned long lastSync = -60000;
   unsigned long connectedSince = -60000;
-  unsigned long disconnectedSince = 0;
+  unsigned long disconnectedSince = -60000;
 };

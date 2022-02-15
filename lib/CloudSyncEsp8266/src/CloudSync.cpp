@@ -67,14 +67,6 @@ void CloudSync::run()
       softAp->enableConfigurationAp();
     }
 
-    // Test every minute if a connection can be reestablished
-    if (millis() - lastSync > 300000 && !webServer->pendingSetup)
-    {
-      Serial.println("Retrying");
-      webServer->connected = sync();
-      stopSync();
-    }
-
     if (webServer->connectionChanged)
     {
       // OOM issue
@@ -84,6 +76,14 @@ void CloudSync::run()
       {
         stopSync();
       }
+    }
+
+    // Test every minute if a connection can be reestablished
+    if (millis() - lastSync > 300000 && !webServer->pendingSetup)
+    {
+      Serial.println("Retrying");
+      webServer->connected = sync();
+      stopSync();
     }
   }
 }
@@ -183,6 +183,9 @@ void CloudSync::override(std::string identifier, int value)
 
 void CloudSync::handleEvent(std::string loc, std::string value)
 {
+  Serial.println("Event");
+  Serial.println(loc.c_str());
+  Serial.println(value.c_str());
   if (eventMap.find(loc) != eventMap.end())
     eventMap[loc](value);
 }
@@ -251,6 +254,7 @@ bool CloudSync::syncOverrides()
   }
   j.pop_back();
   j.push_back('}');
+  Serial.println("Overrides");
   Serial.println(j.c_str());
   if (cloudClient->override(j))
   {

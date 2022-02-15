@@ -17,7 +17,7 @@ public:
 private:
   std::function<void(void)> action;
   int performAction = 0;
-  long lastActivation = -1000;
+  unsigned long lastActivation = -1000;
   int getActivationCount();
   void increaseActivationCount();
 };

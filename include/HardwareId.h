@@ -1,1 +1,1 @@
-#define HARDWARE_ID "led_with_button"
+#define HARDWARE_ID "esp8266_light_switch_module"
