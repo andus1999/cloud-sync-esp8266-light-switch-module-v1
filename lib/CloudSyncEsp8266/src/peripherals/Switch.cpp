@@ -35,6 +35,5 @@ void Switch::toggleState()
   {
     lastActivation = millis();
     onState = !pinState;
-    Serial.println(onState ? "Switch on" : "Switch off");
   }
 }
