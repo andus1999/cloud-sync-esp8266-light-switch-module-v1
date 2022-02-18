@@ -9,15 +9,13 @@ class Button
 {
   // Standard push button
 public:
-  Button(int pinNumber);
   Button(int pinNumber, std::function<void(void)>);
-  int pin;
-  int timesActivated = 0;
+  int getActivationCount();
 
 private:
+  int pin;
+  int timesActivated = 0;
   std::function<void(void)> action;
-  int performAction = 0;
   unsigned long lastActivation = -1000;
-  int getActivationCount();
   void increaseActivationCount();
 };

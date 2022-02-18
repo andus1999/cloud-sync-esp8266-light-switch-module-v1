@@ -5,6 +5,7 @@ Switch::Switch(int pinNumber, std::function<void(void)> onFn = nullptr, std::fun
   pinMode(pin, INPUT);
   onFunction = onFn;
   offFunction = offFn;
+  on = !digitalRead(pin);
 
   attachInterrupt(
       digitalPinToInterrupt(pin), [this]()
@@ -17,23 +18,18 @@ Switch::Switch(int pinNumber, std::function<void(void)> onFn = nullptr, std::fun
 
 int Switch::getState()
 {
-  if (onState != on)
-  {
-    on = !on;
-    if (on)
-      onFunction();
-    else
-      offFunction();
-  }
   return on;
 }
 
 void Switch::toggleState()
 {
   int pinState = digitalRead(pin);
-  if (pinState == onState)
+  if (pinState == on)
   {
-    lastActivation = millis();
-    onState = !pinState;
+    on = !pinState;
+    if (on)
+      onFunction();
+    else
+      offFunction();
   }
 }
