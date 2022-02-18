@@ -74,7 +74,8 @@ private:
   std::map<std::string, std::function<int()>> watchMap;
   std::map<std::string, std::function<int()>> watchLazyMap;
   std::map<std::string, int> syncedLocalState;
-  std::list<std::pair<std::string, int>> overrides;
+  std::map<std::string, int> overrides;
+  std::map<std::string, bool> ignoreEvents;
   std::map<std::string, int> valuesInJson;
   std::string json;
   std::string firmwareLink;

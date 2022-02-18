@@ -178,7 +178,7 @@ void CloudSync::unWatch(std::string identifier)
 
 void CloudSync::override(std::string identifier, int value)
 {
-  overrides.push_back(std::pair(identifier, value));
+  overrides[identifier] = value;
 }
 
 void CloudSync::handleEvent(std::string loc, std::string value)
@@ -186,6 +186,16 @@ void CloudSync::handleEvent(std::string loc, std::string value)
   Serial.println("Event");
   Serial.println(loc.c_str());
   Serial.println(value.c_str());
+
+  if (ignoreEvents.find(loc) != ignoreEvents.end() && ignoreEvents[loc])
+  {
+    Serial.println("Ignoring event");
+    ignoreEvents[loc] = false;
+    return;
+  }
+
+  Serial.println();
+
   if (eventMap.find(loc) != eventMap.end())
     eventMap[loc](value);
 }
@@ -244,7 +254,7 @@ bool CloudSync::syncOverrides()
   if (overrides.size() == 0)
     return true;
   std::string j = "{";
-  for (auto o : overrides)
+  for (auto const &o : overrides)
   {
     j.push_back('\"');
     j.append(o.first);
@@ -256,8 +266,14 @@ bool CloudSync::syncOverrides()
   j.push_back('}');
   Serial.println("Overrides");
   Serial.println(j.c_str());
+  Serial.println();
+
   if (cloudClient->override(j))
   {
+    for (auto const &o : overrides)
+    {
+      ignoreEvents[o.first] = true;
+    }
     overrides.clear();
     return true;
   }
@@ -295,7 +311,9 @@ void CloudSync::generateJson()
   {
     json = "";
   }
+  Serial.println("Upload");
   Serial.println(json.c_str());
+  Serial.println();
 }
 
 void CloudSync::addField(std::pair<std::string, std::function<int()>> it)
