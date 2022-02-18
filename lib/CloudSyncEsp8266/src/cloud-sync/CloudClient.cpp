@@ -24,8 +24,6 @@ void CloudClient::begin(BearSSL::WiFiClientSecure *c,
   https.setReuse(true);
   uploadHttps.setReuse(true);
   https.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
-  initialized = FileSystem::getInstance().getInit() == "true" ? true : false;
-  networkUid = FileSystem::getInstance().getNetworkUid();
 }
 bool CloudClient::update()
 {
@@ -66,6 +64,12 @@ void CloudClient::stop()
 
 bool CloudClient::initialize()
 {
+  initialized = FileSystem::getInstance().getInit() == "true" ? true : false;
+  networkUid = FileSystem::getInstance().getNetworkUid();
+
+  if (initialized)
+    return true;
+
   if (!refreshIdToken())
     return false;
 
