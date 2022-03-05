@@ -17,13 +17,16 @@ void CloudClient::begin(BearSSL::WiFiClientSecure *c,
   parser = Parser(cb, true);
 
   client->setInsecure();
-  uploadClient.setInsecure();
   client->setNoDelay(true);
+
+  uploadClient.setInsecure();
   uploadClient.setNoDelay(true);
   uploadClient.setBufferSizes(UPLOAD_BUFFER, UPLOAD_BUFFER);
+
   https.setReuse(true);
-  uploadHttps.setReuse(true);
   https.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+
+  uploadHttps.setReuse(true);
 }
 bool CloudClient::update()
 {
@@ -56,6 +59,7 @@ bool CloudClient::override(std::string json)
 void CloudClient::stop()
 {
   listeningForEvents = false;
+  initialized = false;
   uploadHttps.end();
   https.end();
   uploadClient.stop();

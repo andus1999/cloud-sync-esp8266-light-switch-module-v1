@@ -200,6 +200,22 @@ void CloudSync::handleEvent(std::string loc, std::string value)
     eventMap[loc](value);
 }
 
+void CloudSync::handleCommand(std::string command)
+{
+  if (command == "disconnect")
+  {
+    override("command", 0);
+    syncOverrides();
+    ignoreEvents["command"] = false;
+    cloudClient->stop();
+    FileSystem::getInstance().setNetworkUid("");
+    FileSystem::getInstance().setRefreshToken("");
+    FileSystem::getInstance().setInit("false");
+    connected = false;
+    disconnectedSince = millis() - 300000;
+  }
+}
+
 void CloudSync::handleFirmwareChange(std::string value)
 {
   if (value != firmwareLink && firmwareLink != "none")
@@ -278,19 +294,6 @@ bool CloudSync::syncOverrides()
     return true;
   }
   return false;
-}
-
-void CloudSync::handleCommand(std::string command)
-{
-  if (command == "disconnect")
-  {
-    override("command", 0);
-    syncOverrides();
-    FileSystem::getInstance().setNetworkUid("");
-    FileSystem::getInstance().setRefreshToken("");
-    FileSystem::getInstance().setInit("false");
-    connected = false;
-  }
 }
 
 void CloudSync::generateJson()
