@@ -1,1 +1,1 @@
-#define FIRMWARE_LINK "none"
+#define FIRMWARE_LINK ""

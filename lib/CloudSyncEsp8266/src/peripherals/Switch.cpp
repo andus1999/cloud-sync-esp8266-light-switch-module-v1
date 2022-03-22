@@ -2,7 +2,7 @@
 
 Switch::Switch(int pinNumber, std::function<void(void)> onFn = nullptr, std::function<void(void)> offFn = nullptr) : pin{pinNumber}
 {
-  pinMode(pin, INPUT);
+  pinMode(pin, INPUT_PULLUP);
   onFunction = onFn;
   offFunction = offFn;
   on = !digitalRead(pin);
