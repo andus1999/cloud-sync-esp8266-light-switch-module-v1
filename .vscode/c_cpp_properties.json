@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/node/include",
-                "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/node/src",
-                "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/node/lib/CloudSyncEsp8266/src",
+                "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/light-switch-module-v1/include",
+                "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/light-switch-module-v1/src",
+                "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/light-switch-module-v1/lib/CloudSyncEsp8266/src",
                 "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
                 "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                 "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src",
@@ -51,15 +51,14 @@
                 "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_enc28j60/src",
                 "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5100/src",
                 "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5500/src",
-                "C:/Users/Andi/.platformio/packages/tool-unity",
                 ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/node/include",
-                    "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/node/src",
-                    "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/node/lib/CloudSyncEsp8266/src",
+                    "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/light-switch-module-v1/include",
+                    "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/light-switch-module-v1/src",
+                    "c:/Users/Andi/Documents/Hardware/PlatformIO/cloud-sync-esp8266/light-switch-module-v1/lib/CloudSyncEsp8266/src",
                     "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src",
                     "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src",
                     "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src",
@@ -100,12 +99,11 @@
                     "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_enc28j60/src",
                     "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5100/src",
                     "C:/Users/Andi/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5500/src",
-                    "C:/Users/Andi/.platformio/packages/tool-unity",
                     ""
                 ]
             },
             "defines": [
-                "PLATFORMIO=50205",
+                "PLATFORMIO=60002",
                 "ESP8266",
                 "ARDUINO_ARCH_ESP8266",
                 "ARDUINO_ESP8266_NODEMCU_ESP12E",
